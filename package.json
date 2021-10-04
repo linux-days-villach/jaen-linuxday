@@ -1,0 +1,84 @@
+{
+  "name": "jaen-template",
+  "version": "1.2.0",
+  "description": "A template repository for Jaen",
+  "homepage": "https://template.snek.at/",
+  "author": "Florian Kleber",
+  "license": "EUPL-1.2",
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "LICENSES"
+  ],
+  "keywords": [
+    "jaen"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/snek-at/jaen-template.git"
+  },
+  "bugs": {
+    "url": "https://github.com/snek-at/jaen-template/issues"
+  },
+  "scripts": {
+    "build": "gatsby build",
+    "develop": "gatsby develop",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "start": "npm run develop",
+    "serve": "gatsby serve",
+    "clean": "gatsby clean",
+    "deploy": "gatsby build && cp CNAME public/ && gh-pages -d public",
+    "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1",
+    "commit": "git-cz --disable-emoji"
+  },
+  "dependencies": {
+    "@chakra-ui/gatsby-plugin": "^2.0.1",
+    "@chakra-ui/icons": "^1.0.15",
+    "@chakra-ui/react": "^1.6.7",
+    "@emotion/react": "^11.4.1",
+    "@emotion/styled": "^11.3.0",
+    "@snek-at/jaen": "^2.0.0",
+    "@snek-at/jaen-pages": "^2.0.0",
+    "electron": "^14.0.0",
+    "framer-motion": "^4.1.17",
+    "gatsby": "^3.12.1",
+    "gatsby-plugin-gatsby-cloud": "^2.11.0",
+    "gatsby-plugin-image": "^1.13.0",
+    "gatsby-plugin-manifest": "^3.13.0",
+    "gatsby-plugin-offline": "^4.12.0",
+    "gatsby-plugin-react-helmet": "^4.12.0",
+    "gatsby-plugin-sharp": "^3.13.0",
+    "gatsby-source-filesystem": "^3.13.0",
+    "gatsby-transformer-sharp": "^3.13.0",
+    "prop-types": "^15.7.2",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-helmet": "^6.1.0",
+    "sharp": "^0.29.1"
+  },
+  "devDependencies": {
+    "cz-conventional-changelog": "^3.3.0",
+    "gatsby-plugin-compile-es6-packages": "^2.1.1",
+    "gatsby-plugin-emotion": "^6.13.0",
+    "gh-pages": "^3.2.3",
+    "prettier": "2.3.2",
+    "typescript": "^4.4.2"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}

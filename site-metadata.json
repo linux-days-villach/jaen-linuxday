@@ -1,0 +1,25 @@
+{
+  "title": "snek site",
+  "description": "Snek Jaen Template",
+  "siteUrl": "https://template.snek.at",
+  "image": "https://cloudflare-ipfs.com/ipfs/QmaPb4WxDEDh3rJUSb37YvrMwznXtmE4qfVoqhrgZZMbfM",
+  "author": {
+    "name": "Your Name",
+    "minibio": "This bio is shown at the bottom of each blog post. It supports <strong>custom HTML</strong> if you’re into that sort of thing."
+  },
+  "organization": {
+    "name": "Example, Inc.",
+    "url": "https://example.com",
+    "logo": "https://lengstorf.com/android-chrome-512x512.png"
+  },
+  "social": {
+    "twitter": "@jlengstorf",
+    "fbAppID": ""
+  },
+  "categories": [
+    {
+      "slug": "test",
+      "name": "Test Category"
+    }
+  ]
+}

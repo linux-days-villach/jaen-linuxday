@@ -1,0 +1,59 @@
+# SPDX-FileCopyrightText: Copyright © 2021 snek.at
+# SPDX-License-Identifier: EUPL-1.2
+#
+# Use of this source code is governed by an EUPL-1.2 license that can be found
+# in the LICENSE file at https://snek.at/license
+
+# https://help.github.com/en/articles/workflow-syntax-for-github-actions#name
+name: Jaen Email
+
+# https://help.github.com/en/articles/workflow-syntax-for-github-actions#on
+on:
+  repository_dispatch:
+    types: ['not_email']
+
+# https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobs
+jobs:
+  # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_id
+  jaen-email:
+    # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idruns-on
+    runs-on: ubuntu-latest
+
+    # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idsteps
+    steps:
+      # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstepsid
+      - name: Send mail
+        uses: dawidd6/action-send-mail@v3
+        with:
+          # Required mail server address:
+          server_address: smtp.office365.com
+          # Required mail server port:
+          server_port: 587
+          # Required mail server username:
+          username: ${{secrets.MAIL_USERNAME}}
+          # Required mail server password:
+          password: ${{secrets.MAIL_PASSWORD}}
+          # Required mail subject:
+          subject: Github Actions job result
+          # Required recipients' addresses:
+          to: your@email.com
+          # Required sender full name (address can be skipped):
+          from: ${{github.event.client_payload.form_first_name}} ${{github.event.client_payload.form_last_name}} <noreply@snek.at> # <user@example.com>
+          # Optional whether this connection use TLS (default is true if server_port is 465)
+          #secure: true
+          # Optional plain body:
+          body: ${{ toJson(github.event.client_payload) }}
+          # Optional HTML body read from file:
+          #html_body: file://README.html
+          # Optional carbon copy recipients:
+          #cc: kyloren@example.com,leia@example.com
+          # Optional blind carbon copy recipients:
+          #bcc: r2d2@example.com,hansolo@example.com
+          # Optional recipient of the email response:
+          reply_to: ${{github.event.client_payload.from_email}}
+          # Optional unsigned/invalid certificates allowance:
+          #ignore_cert: true
+          # Optional converting Markdown to HTML (set content_type to text/html too):
+          #convert_markdown: true
+          # Optional attachments:
+          #attachments: attachments.zip,git.diff,./dist/static/main.js

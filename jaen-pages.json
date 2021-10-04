@@ -1,0 +1,28 @@
+{
+  "pages": {
+    "SitePage /35fa6fb7-622f-4c8b-bc37-6a2e4690432b": {
+      "context": {
+        "fileUrl": "https://cloudflare-ipfs.com/ipfs/QmZm7eq3TGDWcHNWG3ZcNfuF8CPenB7FgsF13jub1X1cDV",
+        "createdAt": "2021-09-28T00:40:10.647Z"
+      },
+      "migrations": [
+        {
+          "fileUrl": "https://cloudflare-ipfs.com/ipfs/QmZm7eq3TGDWcHNWG3ZcNfuF8CPenB7FgsF13jub1X1cDV",
+          "createdAt": "2021-09-28T00:40:10.647Z"
+        }
+      ]
+    }
+  },
+  "snekFinder": {
+    "context": {
+      "createdAt": "2021-09-28T00:40:10.647Z",
+      "fileUrl": "https://cloudflare-ipfs.com/ipfs/QmaLem715JXZwfRQFTFwpUGhURd8zh7anqeZdxZBynCHqY"
+    },
+    "migrations": [
+      {
+        "createdAt": "2021-09-28T00:40:10.647Z",
+        "fileUrl": "https://cloudflare-ipfs.com/ipfs/QmaLem715JXZwfRQFTFwpUGhURd8zh7anqeZdxZBynCHqY"
+      }
+    ]
+  }
+}

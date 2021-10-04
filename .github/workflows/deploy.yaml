@@ -1,0 +1,103 @@
+# SPDX-FileCopyrightText: Copyright © 2021 snek.at
+# SPDX-License-Identifier: EUPL-1.2
+#
+# Use of this source code is governed by an EUPL-1.2 license that can be found
+# in the LICENSE file at https://snek.at/license
+
+# https://help.github.com/en/articles/workflow-syntax-for-github-actions#name
+name: Build and Deploy
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # https://help.github.com/en/articles/virtual-environments-for-github-actions#default-environment-variables
+      # https://github.com/actions/checkout
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2.3.1
+
+      # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstepsid
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '15'
+
+      # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstepsid
+      - name: Github package registry authentication
+        run: npm set //npm.pkg.github.com/:_authToken ${{ secrets.GITHUB_TOKEN }}
+
+      # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstepsid
+      - name: Configure GitHub authentication 🔧
+        # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstepsrun
+        run: |
+          # Git: set identity
+          git config --global user.name "snekmin"
+          git config --global user.email "noreply.snek.at@gmail.com"
+          # Git: set remote
+          # https://developer.github.com/apps/building-github-apps/authenticating-with-github-apps/#http-based-git-access-by-an-installation
+          git remote set-url origin "https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/${GITHUB_REPOSITORY}.git"
+
+      # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstepsid
+      - name: Add Jaen data 🔧
+        run: |
+          if [[ -z $(git ls-remote --heads origin jaen-storage) ]]; then
+            echo "There is no Jaen data deployed"
+            echo "Configure Jaen gitRemote"
+
+            # Adjust Jaen env
+            gitRemoteTemplate="snek-at/jaen-template"
+            envLocalAdjusted="${envLocal/$gitRemoteTemplate/$GITHUB_REPOSITORY}"
+            sed -i "s|$gitRemoteTemplate|$GITHUB_REPOSITORY|g" .env.local
+            git add .env.local
+
+            # Adjust CNAME
+            domainOld="jaen-template.snek-at.snek.at"
+            domain="${GITHUB_REPOSITORY#*/}.${GITHUB_REPOSITORY%/*}.snek.at"
+            sed -i "s|$domainOld|$domain|g" CNAME
+            git add CNAME
+            
+            # Adjust package.json
+            homepageOld="https://template.snek.at/"
+            homepage="https://$domain/"
+            repositoryOld="git+https://github.com/snek-at/jaen-template.git"
+            repository="git+https://github.com/${GITHUB_REPOSITORY}.git"
+            bugsurlOld="https://github.com/snek-at/jaen-template/issues"
+            bugsurl="https://github.com/${GITHUB_REPOSITORY}/issues"
+            sed -i "s|$homepageOld|$homepage|g" package.json
+            sed -i "s|$repositoryOld|$repository|g" package.json
+            sed -i "s|$bugsurlOld|$bugsurl|g" package.json
+            git add package.json
+            # Git: commit, and push changes
+            git commit -m "deploy(package.json): configure Jaen gitRemote" || echo "Nothing to commit, working tree clean."
+            # GIT_TRACE=1 git push -f --verbose origin main
+
+            echo "Create jaen-storage branch"
+            # Create jean-storage branch without history
+            git checkout --orphan jaen-storage
+            # Remove unnecessary files
+            git rm -rf .
+            # Create `jaen-data.json`
+            echo '' > jaen-data.json
+            # reveal what `jaen-data.json` looks like in the logs
+            cat jaen-data.json
+            # Git: add, commit, and push changes
+            git add jaen-data.json
+            git commit -m "deploy(jaen-data.json): update jaen-data" || echo "Nothing to commit, working tree clean."
+            # GIT_TRACE=1 git push -f --verbose origin jaen-storage
+
+            # Create gh-pages branch without history
+            git checkout --orphan gh-pages
+            echo '' > jaen-data.json
+            git add jaen-data.json
+            git commit -m "deploy(jaen-data.json): update jaen-data" || echo "Nothing to commit, working tree clean."
+            # GIT_TRACE=1 git push -f --verbose origin gh-pages
+          else
+            # Jaen is already configured"
+            echo "Jaen has already been initialized"
+          fi
+
+      # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstepsid
+      - name: Install and Build 🔧
+        run: |
+          git checkout main
+          yarn install
+          yarn deploy
