@@ -1,8 +1,8 @@
 {
-  "name": "jaen-template",
+  "name": "jaen-linuxday",
   "version": "1.2.0",
   "description": "A template repository for Jaen",
-  "homepage": "https://template.snek.at/",
+  "homepage": "https://linuxday.snek.at/",
   "author": "Florian Kleber",
   "license": "EUPL-1.2",
   "main": "lib/index.js",
@@ -15,10 +15,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/snek-at/jaen-template.git"
+    "url": "git+https://github.com/snek-at/jaen-linuxday.git"
   },
   "bugs": {
-    "url": "https://github.com/snek-at/jaen-template/issues"
+    "url": "https://github.com/snek-at/jaen-linuxday/issues"
   },
   "scripts": {
     "build": "gatsby build",

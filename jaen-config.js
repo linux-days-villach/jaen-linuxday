@@ -1,5 +1,5 @@
 module.exports = {
-  remote: 'snek-at/jaen-template',
+  remote: 'linux-day-villach/jaen-linuxday',
   initialHideUI: false, // optional hide UI on load
   plugins: {
     pages: {
