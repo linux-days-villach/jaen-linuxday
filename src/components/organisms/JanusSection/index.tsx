@@ -1,6 +1,6 @@
 import JanusFace, {JanusFaceProps} from '../../molecules/JanusFace'
 import React from 'react'
-import {Box, Switch, Center} from '@chakra-ui/react'
+import {Box, Switch, Center, Flex, Text} from '@chakra-ui/react'
 
 export interface JanusSectionProps {
   developer: JanusFaceProps
@@ -13,7 +13,11 @@ const JanusSection = ({developer, economist}: JanusSectionProps) => {
   return (
     <Box>
       <Center mb="5">
-        <Switch onChange={() => setChecked(!checked)} />
+        <Flex>
+          <Text mr="2">Für Entwickler</Text>
+          <Switch onChange={() => setChecked(!checked)} />
+          <Text ml="2">Für Unternehmer</Text>
+        </Flex>
       </Center>
       {checked ? <JanusFace {...developer} /> : <JanusFace {...economist} />}
     </Box>
