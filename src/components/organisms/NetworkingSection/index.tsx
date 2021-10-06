@@ -29,7 +29,8 @@ const NetworkingSection = ({
       <Flex>
         <Box w="45%" h="20vh"></Box>
         <Button
-          mt="15vh"
+          mb={{base: 5, md: 0}}
+          mt={{base: '7.5vh', md: '15vh'}}
           colorScheme="blue"
           variant="solid"
           borderRadius="25px"
@@ -38,8 +39,17 @@ const NetworkingSection = ({
         </Button>
         <Box w="45%" h="20vh"></Box>
       </Flex>
-      <Flex justifyContent="center" alignContent="center">
-        <Box w="30%" border="1px" p="5" borderRadius="25px">
+      <Flex
+        justifyContent="center"
+        alignContent="center"
+        direction={{base: 'column', md: 'row'}}>
+        <Box
+          mb={{base: 5, md: 0}}
+          w={{base: '90%', md: '30%'}}
+          alignSelf={{base: 'center', md: ''}}
+          border="1px"
+          p="5"
+          borderRadius="25px">
           <Heading textAlign="center" mb="5">
             Vorträge
           </Heading>
@@ -47,8 +57,13 @@ const NetworkingSection = ({
           <Box pt="5" />
           {talkbullets}
         </Box>
-        <Box w="20%"></Box>
-        <Box w="30%" border="1px" p="5" borderRadius="25px">
+        <Box w="20%" display={{base: 'none', md: 'block'}}></Box>
+        <Box
+          w={{base: '90%', md: '30%'}}
+          alignSelf={{base: 'center', md: ''}}
+          border="1px"
+          p="5"
+          borderRadius="25px">
           <Heading textAlign="center" mb="5">
             Workshops
           </Heading>
