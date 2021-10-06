@@ -11,7 +11,7 @@ const JanusSection = ({developer, economist}: JanusSectionProps) => {
   const [checked, setChecked] = React.useState(true)
 
   return (
-    <Box>
+    <>
       <Center mb="5">
         <Flex>
           <Text mr="2">Für Entwickler</Text>
@@ -19,8 +19,17 @@ const JanusSection = ({developer, economist}: JanusSectionProps) => {
           <Text ml="2">Für Unternehmer</Text>
         </Flex>
       </Center>
-      {checked ? <JanusFace {...developer} /> : <JanusFace {...economist} />}
-    </Box>
+      <Flex>
+        <Box w="5%" h="100%" bg="black"></Box>
+        <Box w="95%">
+          {checked ? (
+            <JanusFace {...developer} />
+          ) : (
+            <JanusFace {...economist} />
+          )}
+        </Box>
+      </Flex>
+    </>
   )
 }
 
