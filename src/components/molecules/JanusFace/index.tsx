@@ -5,7 +5,8 @@ import {
   Flex,
   Text,
   Heading,
-  SimpleGrid
+  SimpleGrid,
+  useColorMode
 } from '@chakra-ui/react'
 
 import * as style from './style'
@@ -37,6 +38,7 @@ const JanusFace = ({
   factFourContent,
   backgroundimage
 }: JanusFaceProps) => {
+  const {colorMode} = useColorMode()
   return (
     <Box position={'relative'}>
       <Flex
@@ -49,7 +51,11 @@ const JanusFace = ({
         right={0}>
         <style.BackgroundImage>{backgroundimage}</style.BackgroundImage>
         <Flex
-          bgGradient={'linear(to-r, white 10%, transparent)'}
+          bgGradient={
+            colorMode === 'light'
+              ? 'linear(to-r, white 10%, transparent)'
+              : 'linear(to-r, gray.800 10%, transparent)'
+          }
           w={'full'}
           h={'full'}
           zIndex={1}
@@ -62,7 +68,10 @@ const JanusFace = ({
             justify={{lg: 'center'}}
             py={{base: 4, md: 20, xl: 60}}>
             <Box mb={{base: 8, md: 20}}>
-              <Heading mb={5} fontSize={{base: '3xl', md: '5xl'}}>
+              <Heading
+                mb={5}
+                textAlign="center"
+                fontSize={{base: '3xl', md: '5xl'}}>
                 {heading}
               </Heading>
               <Text fontSize={'xl'}>{teaser}</Text>

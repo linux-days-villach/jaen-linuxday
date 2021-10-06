@@ -1,6 +1,6 @@
 import JanusFace, {JanusFaceProps} from '../../molecules/JanusFace'
 import React from 'react'
-import {Box, Switch, Center, Flex, Text} from '@chakra-ui/react'
+import {Box, Switch, Center, Flex, Text, useColorMode} from '@chakra-ui/react'
 
 export interface JanusSectionProps {
   developer: JanusFaceProps
