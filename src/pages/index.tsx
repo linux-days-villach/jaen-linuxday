@@ -1,12 +1,19 @@
 import {Box} from '@chakra-ui/react'
 import {fields} from '@snek-at/jaen-pages'
 
-import DescriptionSection from '../components/organisms/DescriptionSection'
+import DescriptionSection from '../components/organisms/sections/DescriptionSection'
 
 const IndexPage = () => {
   return (
     <Box>
       <DescriptionSection
+        headlines={
+          [
+            "Deine chance deine FOSS zu presentieren.",
+            "Deine chance dich mit Experten auszutauschen.",
+            "Deine chance dich in der welt der technik einzubringen.",
+          ]
+        }
         teaser={
           <fields.TextField
             fieldName="description-teaser"
