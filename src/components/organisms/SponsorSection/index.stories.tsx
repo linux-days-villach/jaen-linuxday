@@ -1,6 +1,7 @@
-import SponsorSection, {SponsorSectionProps} from '.'
 import {Story, Meta} from '@storybook/react'
 import {Image} from '@chakra-ui/react'
+
+import SponsorSection, {SponsorSectionProps} from '.'
 
 export default {
   component: SponsorSection,
