@@ -54,6 +54,7 @@ const GanttChart = () => {
     document.documentElement.clientHeight / 1.5
   )
   const paddingX = 20
+  const categories = uniqueCategories(data)
 
   const axisScale = d3
     .scaleTime()
@@ -61,7 +62,7 @@ const GanttChart = () => {
     .range([paddingX, width - paddingX])
     .nice()
 
-makeGant(taskArray, w, h)
+  const colorScale = d3.scaleOrdinal().domain(categories).range(d3.schemeSet3)
 
   //#endregion
 
@@ -85,39 +86,19 @@ makeGant(taskArray, w, h)
           .tickSize(-height)
       )
 
-function drawRects(
-  theArray,
-  theGap,
-  theTopPad,
-  theSidePad,
-  theBarHeight,
-  theColorScale,
-  w,
-  h
-) {
-  var bigRects = svg
-    .append('g')
-    .selectAll('rect')
-    .data(theArray)
-    .enter()
+    /* draw background colorrects */
+    for (let i = 0; i < categories.length; i++) {
+      svgElement
     .append('rect')
-    .attr('x', 0)
-    .attr('y', function (d, i) {
-      return i * theGap + theTopPad - 2
+        .attr('x', paddingX)
+        .attr('y', i * ((height - 20) / categories.length))
+        .attr('width', width - 40)
+        .attr('height', (height - 20) / categories.length)
+        .attr('fill', (d = categories[i]) => {
+          return colorScale(d)
     })
-    .attr('width', function (d) {
-      return w - theSidePad / 2
-    })
-    .attr('height', theGap)
-    .attr('stroke', 'none')
-    .attr('fill', function (d) {
-      for (var i = 0; i < categories.length; i++) {
-        if (d.type == categories[i]) {
-          return d3.rgb(theColorScale(i))
+        .attr('opacity', 0.4)
         }
-      }
-    })
-    .attr('opacity', 0.2)
 
   var rectangles = svg.append('g').selectAll('rect').data(theArray).enter()
 
