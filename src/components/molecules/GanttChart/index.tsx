@@ -1,144 +1,89 @@
+//#region > Imports
+
+import * as React from 'react'
 import * as d3 from 'd3'
+import GanttStyle from './style'
+import {dataType} from './types'
 
-var w = 800
-var h = 400
+//#endregion
 
-var svg = d3
-  .selectAll('.svg')
-  //.selectAll("svg")
-  .append('svg')
-  .attr('width', w)
-  .attr('height', h)
-  .attr('class', 'svg')
-
-var taskArray = [
+const data: dataType[] = [
   {
-    task: 'conceptualize',
-    type: 'development',
-    startTime: '2013-1-28', //year/month/day
-    endTime: '2013-2-1',
-    details: "This actually didn't take any conceptualization"
-  },
-
-  {
-    task: 'sketch',
-    type: 'development',
-    startTime: '2013-2-1',
-    endTime: '2013-2-6',
-    details: 'No sketching either, really'
-  },
-
-  {
-    task: 'color profiles',
-    type: 'development',
-    startTime: '2013-2-6',
-    endTime: '2013-2-9'
-  },
-
-  {
-    task: 'HTML',
-    type: 'coding',
-    startTime: '2013-2-2',
-    endTime: '2013-2-6',
-    details: 'all three lines of it'
-  },
-
-  {
-    task: 'write the JS',
-    type: 'coding',
-    startTime: '2013-2-6',
-    endTime: '2013-2-9'
-  },
-
-  {
-    task: 'advertise',
-    type: 'promotion',
-    startTime: '2013-2-9',
-    endTime: '2013-2-12',
-    details: 'This counts, right?'
-  },
-
-  {
-    task: 'spam links',
-    type: 'promotion',
-    startTime: '2013-2-12',
-    endTime: '2013-2-14'
+    categorie: 'security',
+    startDate: new Date(2021, 10, 12, 17),
+    endDate: new Date(2021, 10, 12, 18)
   },
   {
-    task: 'eat',
-    type: 'celebration',
-    startTime: '2013-2-8',
-    endTime: '2013-2-13',
-    details: 'All the things'
+    categorie: 'franz',
+    startDate: new Date(2021, 10, 12, 17),
+    endDate: new Date(2021, 10, 12, 18)
   },
-
   {
-    task: 'crying',
-    type: 'celebration',
-    startTime: '2013-2-13',
-    endTime: '2013-2-16'
+    categorie: 'herbert',
+    startDate: new Date(2021, 10, 12, 17),
+    endDate: new Date(2021, 10, 12, 18)
+  },
+  {
+    categorie: 'friedrich',
+    startDate: new Date(2021, 10, 12, 17),
+    endDate: new Date(2021, 10, 12, 18)
   }
 ]
 
-var dateFormat = d3.timeFormat('%Y-%m-%d')
+//#region Utils
 
-var timeScale = d3.time
-  .domain([
-    d3.min(taskArray, function (d) {
-      return dateFormat.parse(d.startTime)
-    }),
-    d3.max(taskArray, function (d) {
-      return dateFormat.parse(d.endTime)
-    })
-  ])
-  .range([0, w - 150])
-
-var categories = new Array()
-
-for (var i = 0; i < taskArray.length; i++) {
-  categories.push(taskArray[i].type)
+// only push unique categories in categories array
+const uniqueCategories = (data: dataType[]) => {
+  const categories: string[] = []
+  for (const d of data) {
+    if (!categories.includes(d.categorie)) {
+      categories.push(d.categorie)
+    }
+  }
+  return categories
 }
 
-var catsUnfiltered = categories //for vert labels
+//#endregion
 
-categories = checkUnique(categories)
+const GanttChart = () => {
+  //#region Setup
+
+  const ref = React.useRef(null)
+  const [width, setWidth] = React.useState(document.documentElement.clientWidth)
+  const [height, setHeight] = React.useState(
+    document.documentElement.clientHeight / 1.5
+  )
+  const paddingX = 20
+
+  const axisScale = d3
+    .scaleTime()
+    .domain([new Date().setHours(17), new Date().setHours(24)])
+    .range([paddingX, width - paddingX])
+    .nice()
 
 makeGant(taskArray, w, h)
 
-var title = svg
-  .append('text')
-  .text('Gantt Chart Process')
-  .attr('x', w / 2)
-  .attr('y', 25)
-  .attr('text-anchor', 'middle')
-  .attr('font-size', 18)
-  .attr('fill', '#009FFC')
+  //#endregion
 
-function makeGant(tasks, pageWidth, pageHeight) {
-  var barHeight = 20
-  var gap = barHeight + 4
-  var topPadding = 75
-  var sidePadding = 75
+  //#region Draw
 
-  var colorScale = d3.scale
-    .linear()
-    .domain([0, categories.length])
-    .range(['#00B9FA', '#F95002'])
-    .interpolate(d3.interpolateHcl)
+  React.useEffect(() => {
+    const svgElement = d3.select(ref.current)
 
-  makeGrid(sidePadding, topPadding, pageWidth, pageHeight)
-  drawRects(
-    tasks,
-    gap,
-    topPadding,
-    sidePadding,
-    barHeight,
-    colorScale,
-    pageWidth,
-    pageHeight
+    /* draw x-axis */
+    svgElement
+      .append('g')
+      .attr('className', 'axis')
+      .attr('transform', `translate(0,${height - 20})`)
+      .call(
+        d3
+          .axisBottom(axisScale)
+          .ticks(
+            d3.utcMinute.every(width < 1500 ? 60 : 30),
+            d3.utcFormat('%H:%M')
   )
-  vertLabels(gap, topPadding, sidePadding, barHeight, colorScale)
-}
+          .tickSize(-height)
+      )
 
 function drawRects(
   theArray,
@@ -199,225 +144,16 @@ function drawRects(
         if (d.type == categories[i]) {
           return d3.rgb(theColorScale(i))
         }
-      }
-    })
+  }, [width, height])
 
-  var rectText = rectangles
-    .append('text')
-    .text(function (d) {
-      return d.task
-    })
-    .attr('x', function (d) {
+  //#endregion
+
       return (
-        (timeScale(dateFormat.parse(d.endTime)) -
-          timeScale(dateFormat.parse(d.startTime))) /
-          2 +
-        timeScale(dateFormat.parse(d.startTime)) +
-        theSidePad
+    <GanttStyle>
+      <svg ref={ref} width={width} height={height} />
+    </GanttStyle>
       )
-    })
-    .attr('y', function (d, i) {
-      return i * theGap + 14 + theTopPad
-    })
-    .attr('font-size', 11)
-    .attr('text-anchor', 'middle')
-    .attr('text-height', theBarHeight)
-    .attr('fill', '#fff')
-
-  rectText
-    .on('mouseover', function (e) {
-      // console.log(this.x.animVal.getItem(this));
-      var tag = ''
-
-      if (d3.select(this).data()[0].details != undefined) {
-        tag =
-          'Task: ' +
-          d3.select(this).data()[0].task +
-          '<br/>' +
-          'Type: ' +
-          d3.select(this).data()[0].type +
-          '<br/>' +
-          'Starts: ' +
-          d3.select(this).data()[0].startTime +
-          '<br/>' +
-          'Ends: ' +
-          d3.select(this).data()[0].endTime +
-          '<br/>' +
-          'Details: ' +
-          d3.select(this).data()[0].details
-      } else {
-        tag =
-          'Task: ' +
-          d3.select(this).data()[0].task +
-          '<br/>' +
-          'Type: ' +
-          d3.select(this).data()[0].type +
-          '<br/>' +
-          'Starts: ' +
-          d3.select(this).data()[0].startTime +
-          '<br/>' +
-          'Ends: ' +
-          d3.select(this).data()[0].endTime
       }
       var output = document.getElementById('tag')
 
-      var x = this.x.animVal.getItem(this) + 'px'
-      var y = this.y.animVal.getItem(this) + 25 + 'px'
-
-      output.innerHTML = tag
-      output.style.top = y
-      output.style.left = x
-      output.style.display = 'block'
-    })
-    .on('mouseout', function () {
-      var output = document.getElementById('tag')
-      output.style.display = 'none'
-    })
-
-  innerRects
-    .on('mouseover', function (e) {
-      //console.log(this);
-      var tag = ''
-
-      if (d3.select(this).data()[0].details != undefined) {
-        tag =
-          'Task: ' +
-          d3.select(this).data()[0].task +
-          '<br/>' +
-          'Type: ' +
-          d3.select(this).data()[0].type +
-          '<br/>' +
-          'Starts: ' +
-          d3.select(this).data()[0].startTime +
-          '<br/>' +
-          'Ends: ' +
-          d3.select(this).data()[0].endTime +
-          '<br/>' +
-          'Details: ' +
-          d3.select(this).data()[0].details
-      } else {
-        tag =
-          'Task: ' +
-          d3.select(this).data()[0].task +
-          '<br/>' +
-          'Type: ' +
-          d3.select(this).data()[0].type +
-          '<br/>' +
-          'Starts: ' +
-          d3.select(this).data()[0].startTime +
-          '<br/>' +
-          'Ends: ' +
-          d3.select(this).data()[0].endTime
-      }
-      var output = document.getElementById('tag')
-
-      var x = this.x.animVal.value + this.width.animVal.value / 2 + 'px'
-      var y = this.y.animVal.value + 25 + 'px'
-
-      output.innerHTML = tag
-      output.style.top = y
-      output.style.left = x
-      output.style.display = 'block'
-    })
-    .on('mouseout', function () {
-      var output = document.getElementById('tag')
-      output.style.display = 'none'
-    })
-}
-
-function makeGrid(theSidePad, theTopPad, w, h) {
-  var xAxis = d3.svg
-    .axis()
-    .scale(timeScale)
-    .orient('bottom')
-    .ticks(d3.time.days, 1)
-    .tickSize(-h + theTopPad + 20, 0, 0)
-    .tickFormat(d3.time.format('%d %b'))
-
-  var grid = svg
-    .append('g')
-    .attr('class', 'grid')
-    .attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')')
-    .call(xAxis)
-    .selectAll('text')
-    .style('text-anchor', 'middle')
-    .attr('fill', '#000')
-    .attr('stroke', 'none')
-    .attr('font-size', 10)
-    .attr('dy', '1em')
-}
-
-function vertLabels(
-  theGap,
-  theTopPad,
-  theSidePad,
-  theBarHeight,
-  theColorScale
-) {
-  var numOccurances = new Array()
-  var prevGap = 0
-
-  for (var i = 0; i < categories.length; i++) {
-    numOccurances[i] = [categories[i], getCount(categories[i], catsUnfiltered)]
-  }
-
-  var axisText = svg
-    .append('g') //without doing this, impossible to put grid lines behind text
-    .selectAll('text')
-    .data(numOccurances)
-    .enter()
-    .append('text')
-    .text(function (d) {
-      return d[0]
-    })
-    .attr('x', 10)
-    .attr('y', function (d, i) {
-      if (i > 0) {
-        for (var j = 0; j < i; j++) {
-          prevGap += numOccurances[i - 1][1]
-          // console.log(prevGap);
-          return (d[1] * theGap) / 2 + prevGap * theGap + theTopPad
-        }
-      } else {
-        return (d[1] * theGap) / 2 + theTopPad
-      }
-    })
-    .attr('font-size', 11)
-    .attr('text-anchor', 'start')
-    .attr('text-height', 14)
-    .attr('fill', function (d) {
-      for (var i = 0; i < categories.length; i++) {
-        if (d[0] == categories[i]) {
-          //  console.log("true!");
-          return d3.rgb(theColorScale(i)).darker()
-        }
-      }
-    })
-}
-
-//from this stackexchange question: http://stackoverflow.com/questions/1890203/unique-for-arrays-in-javascript
-function checkUnique(arr) {
-  var hash = {},
-    result = []
-  for (var i = 0, l = arr.length; i < l; ++i) {
-    if (!hash.hasOwnProperty(arr[i])) {
-      //it works with objects! in FF, at least
-      hash[arr[i]] = true
-      result.push(arr[i])
-    }
-  }
-  return result
-}
-
-//from this stackexchange question: http://stackoverflow.com/questions/14227981/count-how-many-strings-in-an-array-have-duplicates-in-the-same-array
-function getCounts(arr) {
-  var i = arr.length, // var to loop over
-    obj = {} // obj to store results
-  while (i) obj[arr[--i]] = (obj[arr[i]] || 0) + 1 // count occurrences
-  return obj
-}
-
-// get specific from everything
-function getCount(word, arr) {
-  return getCounts(arr)[word] || 0
-}
+export default GanttChart

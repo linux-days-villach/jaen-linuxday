@@ -1,18 +1,13 @@
 import {Box, Heading, Center} from '@chakra-ui/react'
 
 import {fields} from '@snek-at/jaen-pages'
+import React from 'react'
+import GanttChart from '../components/molecules/GanttChart'
 
 const IndexPage = () => {
   return (
     <Box>
-      <Center mt="45vh">
-        <Heading>
-          <fields.TextField
-            fieldName="home-text"
-            initValue="<p>Hello World</p>"
-          />
-        </Heading>
-      </Center>
+      <GanttChart />
     </Box>
   )
 }
