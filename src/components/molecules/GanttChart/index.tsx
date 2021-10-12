@@ -54,6 +54,7 @@ const GanttChart = () => {
     document.documentElement.clientHeight / 1.5
   )
   const paddingX = 20
+  const currentTime = new Date()
   const categories = uniqueCategories(data)
 
   const axisScale = d3
@@ -100,30 +101,40 @@ const GanttChart = () => {
         .attr('opacity', 0.4)
         }
 
-  var rectangles = svg.append('g').selectAll('rect').data(theArray).enter()
-
-  var innerRects = rectangles
-    .append('rect')
-    .attr('rx', 3)
-    .attr('ry', 3)
-    .attr('x', function (d) {
-      return timeScale(dateFormat.parse(d.startTime)) + theSidePad
-    })
-    .attr('y', function (d, i) {
-      return i * theGap + theTopPad
-    })
-    .attr('width', function (d) {
-      return (
-        timeScale(dateFormat.parse(d.endTime)) -
-        timeScale(dateFormat.parse(d.startTime))
+    /* draw ellapsed time area */
+    svgElement
+      .append('line')
+      .attr(
+        'x1',
+        axisScale(currentTime) > width
+          ? width - paddingX
+          : axisScale(currentTime)
       )
-    })
-    .attr('height', theBarHeight)
-    .attr('stroke', 'none')
-    .attr('fill', function (d) {
-      for (var i = 0; i < categories.length; i++) {
-        if (d.type == categories[i]) {
-          return d3.rgb(theColorScale(i))
+      .attr('y1', 0)
+      .attr(
+        'x2',
+        axisScale(currentTime) > width
+          ? width - paddingX
+          : axisScale(currentTime)
+      )
+      .attr('y2', height - 20)
+      .style('stroke-width', 2)
+      .style('stroke', 'red')
+
+    svgElement
+    .append('rect')
+      .attr('x', paddingX)
+      .attr('y', 0)
+      .attr(
+        'width',
+        axisScale(currentTime) - paddingX > width - paddingX
+          ? width - 40
+          : axisScale(currentTime) - paddingX
+      )
+      .attr('height', height - 20)
+      .attr('fill', 'red')
+      .attr('opacity', 0.2)
+
         }
   }, [width, height])
 
