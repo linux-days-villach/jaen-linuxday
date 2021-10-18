@@ -3,65 +3,94 @@
 import * as React from 'react'
 import * as d3 from 'd3'
 import GanttStyle from './style'
-import {dataType, categoryCountType} from './types'
+import {DataType, RoomAndTimesType, GanttProps} from './types'
 
 //#endregion
 
-const data: dataType[] = [
-  {
-    category: 'security',
-    startDate: new Date(2021, 9, 14, 1),
-    endDate: new Date(2021, 9, 14, 2),
-    title: 'About some shit and'
-  },
-  {
-    category: 'security',
-    startDate: new Date(2021, 9, 14, 1),
-    endDate: new Date(2021, 9, 14, 2),
-    title: 'About some shit'
-  },
-  {
-    category: 'security',
-    startDate: new Date(2021, 9, 14, 1),
-    endDate: new Date(2021, 9, 14, 2),
-    title: 'About some shit'
-  },
-  {
-    category: 'franz',
-    startDate: new Date(2021, 9, 14, 3),
-    endDate: new Date(2021, 9, 14, 4),
-    title: 'About some shit'
-  },
-  {
-    category: 'herbert',
-    startDate: new Date(2021, 9, 14, 5),
-    endDate: new Date(2021, 9, 14, 6),
-    title: 'About some shit'
-  },
-  {
-    category: 'friedrich',
-    startDate: new Date(2021, 9, 13, 6),
-    endDate: new Date(2021, 9, 13, 7),
-    title: 'About some shit'
-  }
-]
-
 //#region Utils
+let categoriesAndTimes: RoomAndTimesType = {}
 
-// only push unique categories in categories array
-const uniqueCategories = (data: dataType[]) => {
-  const categories: string[] = []
+/* only push unique categories and times */
+const setUniqueCategoriesAndTimes = (data: DataType[]) => {
   for (const d of data) {
-    if (!categories.includes(d.category)) {
-      categories.push(d.category)
+    let changed = false
+    if (!(d.room in categoriesAndTimes)) {
+      changed = true
+      categoriesAndTimes[d.room] = [
+        {
+          startTime: d.startDate,
+          endTime: d.endDate,
+          count: 1,
+          timesCalled: 0
+        }
+      ]
+    } else {
+      for (let i = 0; i < categoriesAndTimes[d.room].length; i++) {
+        if (
+          (d.startDate < categoriesAndTimes[d.room][i].endTime &&
+            d.startDate >= categoriesAndTimes[d.room][i].startTime) ||
+          (d.endDate <= categoriesAndTimes[d.room][i].endTime &&
+            d.endDate > categoriesAndTimes[d.room][i].startTime) ||
+          (d.startDate < categoriesAndTimes[d.room][i].startTime &&
+            d.endDate > categoriesAndTimes[d.room][i].endTime)
+        ) {
+          changed = true
+          const startTime =
+            categoriesAndTimes[d.room][i].startTime > d.startDate
+              ? d.startDate
+              : categoriesAndTimes[d.room][i].startTime
+          const endTime =
+            categoriesAndTimes[d.room][i].endTime < d.endDate
+              ? d.endDate
+              : categoriesAndTimes[d.room][i].endTime
+          categoriesAndTimes[d.room][i] = {
+            ...categoriesAndTimes[d.room][i],
+            startTime: startTime,
+            endTime: endTime,
+            count: categoriesAndTimes[d.room][i].count + 1
+          }
+        }
+      }
+    }
+    if (!changed) {
+      categoriesAndTimes[d.room].push({
+        startTime: d.startDate,
+        endTime: d.endDate,
+        count: 1,
+        timesCalled: 0
+      })
     }
   }
-  return categories
+}
+
+/* Get the y position of the EventRect */
+/* TODO
+ * Rewrite function and RoomsAndTimesType interface to check whether the event can fit next to the last event.
+ * This could be achieved by adding an optional startDate and endDate to the type.
+ */
+const getRoomTimeTimesCalled = (
+  room: string,
+  startDate: Date,
+  endDate: Date
+) => {
+  for (const timeCount of categoriesAndTimes[room]) {
+    if (
+      startDate <= timeCount.endTime &&
+      startDate >= timeCount.startTime &&
+      endDate <= timeCount.endTime &&
+      endDate >= timeCount.startTime
+    ) {
+      categoriesAndTimes[room][categoriesAndTimes[room].indexOf(timeCount)]
+        .timesCalled++
+
+      return timeCount.timesCalled
+    }
+  }
 }
 
 //#endregion
 
-const GanttChart = () => {
+const GanttChart = ({data}: GanttProps) => {
   //#region Setup
 
   const ref = React.useRef(null)
@@ -71,14 +100,16 @@ const GanttChart = () => {
   )
   const paddingX = 20
   const currentTime = new Date()
-  const categories = uniqueCategories(data)
 
   const axisScale = d3
     .scaleTime()
-    .domain([new Date().setHours(0), new Date().setHours(10)])
+    .domain([new Date().setHours(14), new Date().setHours(23)])
     .range([paddingX, width - paddingX])
     .nice()
 
+  setUniqueCategoriesAndTimes(data)
+  console.log(categoriesAndTimes)
+  const categories = Object.keys(categoriesAndTimes)
   const colorScale = d3.scaleOrdinal().domain(categories).range(d3.schemePaired)
 
   //#endregion
@@ -119,15 +150,10 @@ const GanttChart = () => {
     }
 
     /* draw event rects */
-    let categoryCount: categoryCountType = {}
-
-    for (const category of categories) {
-      categoryCount[category] = 0
-    }
     const categoryheigth = (height - 20) / categories.length
 
-    const eventHeigth = (height - 20) / categories.length / 4
-    const eventGap = (categoryheigth - eventHeigth * 3) / 4
+    const eventHeigth = (height - 20) / categories.length / 5
+    const eventGap = (categoryheigth - eventHeigth * 4) / 5
 
     const tooltip = d3
       .select('body')
@@ -136,39 +162,49 @@ const GanttChart = () => {
       .style('opacity', 0)
 
     for (let i = 0; i < data.length; i++) {
-      const html =
+      const count = getRoomTimeTimesCalled(
+        data[i].room,
+        data[i].startDate,
+        data[i].endDate
+      )
+      let html =
         data[i].title +
         '<br/>' +
         data[i].startDate.toLocaleTimeString().substring(0, 4) +
         ' - ' +
-        data[i].endDate.toLocaleTimeString().substring(0, 4)
+        data[i].endDate.toLocaleTimeString().substring(0, 4) +
+        '<br/>Beschreibung:<br/>' +
+        data[i].description +
+        '<br/>Sprecher:<br/>'
+      for (const speaker of data[i].speakers) {
+        html += `${speaker.name}<br/>${speaker.bio}<br/>`
+      }
       const y =
-        categoryheigth * categories.indexOf(data[i].category) +
-        eventHeigth * categoryCount[data[i].category] +
-        eventGap * (categoryCount[data[i].category] + 1)
+        categoryheigth * categories.indexOf(data[i].room) +
+        eventHeigth * (count - 1) +
+        eventGap * count
       svgElement
         .append('rect')
         .attr('x', axisScale(data[i].startDate))
-        .attr('y', (d = data[i]) => {
-          categoryCount[d.category] = categoryCount[d.category] + 1
+        .attr('y', () => {
           return y
         })
         .attr('width', (d = data[i]) => {
           return axisScale(d.endDate) - axisScale(d.startDate)
         })
         .attr('height', eventHeigth)
-        .attr('fill', (d = data[i]) => {
-          return colorScale(d.category)
+        .attr('fill', () => {
+          return colorScale(data[i].room)
         })
         .attr('stroke', 'black')
         .attr('stroke-width', '0.5px')
         .attr('rx', 4)
         .attr('ry', 4)
-        .on('mouseenter', () => {
+        .on('mouseover', () => {
           tooltip
             .html(html)
             .style('position', 'absolute')
-            .style('top', (y + eventHeigth).toString() + 'px')
+            .style('top', (y + eventHeigth + 5).toString() + 'px')
             .style('left', axisScale(data[i].startDate).toString() + 'px')
             .style('background-color', '#ff6961')
             .style('border-radius', '5px')
@@ -193,11 +229,11 @@ const GanttChart = () => {
         .attr('y', y + eventHeigth / 2 + 2)
         .attr('text-anchor', 'middle')
         .attr('dominant-baseline', 'middle')
-        .on('mouseenter', () => {
+        .on('mouseover', () => {
           tooltip
             .html(html)
             .style('position', 'absolute')
-            .style('top', (y + eventHeigth).toString() + 'px')
+            .style('top', (y + eventHeigth + 5).toString() + 'px')
             .style('left', axisScale(data[i].startDate).toString() + 'px')
             .style('background-color', '#ff6961')
             .style('border-radius', '5px')
@@ -246,6 +282,7 @@ const GanttChart = () => {
       .attr('fill', 'red')
       .attr('opacity', 0.2)
       .attr('className', 'ellapsed-time')
+      .style('pointer-events', 'none')
   }, [width, height])
 
   //#endregion
