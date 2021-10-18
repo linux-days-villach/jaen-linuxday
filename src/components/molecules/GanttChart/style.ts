@@ -16,7 +16,5 @@ const GanttStyle = styled(Box)`
     stroke-width: 1px;
     shape-rendering: crispEdges;
   }
-  .ellapsed-time {
-  }
 `
 export default GanttStyle
