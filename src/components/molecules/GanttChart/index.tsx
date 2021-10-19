@@ -168,16 +168,22 @@ const GanttChart = ({data}: GanttProps) => {
         data[i].endDate
       )
       let html =
+        '<b>' +
         data[i].title +
+        '</b>' +
         '<br/>' +
         data[i].startDate.toLocaleTimeString().substring(0, 4) +
         ' - ' +
         data[i].endDate.toLocaleTimeString().substring(0, 4) +
-        '<br/>Beschreibung:<br/>' +
+        '<br /><b>Beschreibung:</b><br/>' +
         data[i].description +
-        '<br/>Sprecher:<br/>'
+        '<br/><b>Sprecher:</b><br/>'
       for (const speaker of data[i].speakers) {
         html += `${speaker.name}<br/>${speaker.bio}<br/>`
+      }
+      html += '<b>Tags:</b><br/>'
+      for (let j = 0; j < data[i].tags.length; j++) {
+        html += data[i].tags[j] + (j === data[i].tags.length - 1 ? '' : ', ')
       }
       const y =
         categoryheigth * categories.indexOf(data[i].room) +
@@ -200,7 +206,8 @@ const GanttChart = ({data}: GanttProps) => {
         .attr('stroke-width', '0.5px')
         .attr('rx', 4)
         .attr('ry', 4)
-        .on('mouseover', () => {
+        .style('cursor', 'pointer')
+        .on('mouseenter', () => {
           tooltip
             .html(html)
             .style('position', 'absolute')
@@ -211,6 +218,7 @@ const GanttChart = ({data}: GanttProps) => {
             .style('border-width', '1px')
             .style('border-color', 'black')
             .style('padding', '10px')
+            .style('width', '380px')
           tooltip.transition().duration(50).style('opacity', 1)
         })
         .on('mouseleave', () => {
@@ -229,7 +237,8 @@ const GanttChart = ({data}: GanttProps) => {
         .attr('y', y + eventHeigth / 2 + 2)
         .attr('text-anchor', 'middle')
         .attr('dominant-baseline', 'middle')
-        .on('mouseover', () => {
+        .style('cursor', 'pointer')
+        .on('mouseenter', () => {
           tooltip
             .html(html)
             .style('position', 'absolute')
