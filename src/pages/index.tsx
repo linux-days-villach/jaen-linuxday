@@ -1,16 +1,14 @@
 import {Box, Heading, Center} from '@chakra-ui/react'
 
-import {fields} from '@snek-at/jaen-pages'
-import React from 'react'
-import GanttChart from '../components/molecules/GanttChart'
 import {DataType} from '../components/molecules/GanttChart/types'
+import TimeLineSection from '../components/organisms/sections/TimeLineSection'
 
 const data: DataType[] = [
   {
-    tags: ['security'],
+    tags: ['security', 'software-development'],
     room: 'Große Halle',
-    startDate: new Date(2021, 9, 18, 15),
-    endDate: new Date(2021, 9, 18, 17),
+    startDate: new Date(2021, 9, 19, 15),
+    endDate: new Date(2021, 9, 19, 17),
     title: 'About some shit and',
     description: 'Its about some shit and so on and so on',
     speakers: [
@@ -27,8 +25,8 @@ const data: DataType[] = [
   {
     tags: ['security'],
     room: 'Große Halle',
-    startDate: new Date(2021, 9, 18, 15),
-    endDate: new Date(2021, 9, 18, 17),
+    startDate: new Date(2021, 9, 19, 15),
+    endDate: new Date(2021, 9, 19, 17),
     title: 'About some shit',
     description: 'Its about some shit and so on and so on',
     speakers: [
@@ -45,8 +43,8 @@ const data: DataType[] = [
   {
     tags: ['security'],
     room: 'Große Halle',
-    startDate: new Date(2021, 9, 18, 15),
-    endDate: new Date(2021, 9, 18, 17),
+    startDate: new Date(2021, 9, 19, 14),
+    endDate: new Date(2021, 9, 19, 16),
     title: 'About some shit and',
     description: 'Its about some shit and so on and so on',
     speakers: [
@@ -63,8 +61,8 @@ const data: DataType[] = [
   {
     tags: ['security'],
     room: 'Große Halle',
-    startDate: new Date(2021, 9, 18, 15),
-    endDate: new Date(2021, 9, 18, 17),
+    startDate: new Date(2021, 9, 19, 16),
+    endDate: new Date(2021, 9, 19, 18),
     title: 'About some shit',
     description: 'Its about some shit and so on and so on',
     speakers: [
@@ -81,8 +79,8 @@ const data: DataType[] = [
   {
     tags: ['security'],
     room: 'Kleine Halle',
-    startDate: new Date(2021, 9, 18, 16),
-    endDate: new Date(2021, 9, 18, 17),
+    startDate: new Date(2021, 9, 19, 16),
+    endDate: new Date(2021, 9, 19, 17),
     title: 'About some shit',
     description: 'Its about some shit and so on and so on',
     speakers: [
@@ -105,8 +103,8 @@ const data: DataType[] = [
   {
     tags: ['security'],
     room: 'Aula',
-    startDate: new Date(2021, 9, 18, 17),
-    endDate: new Date(2021, 9, 18, 18),
+    startDate: new Date(2021, 9, 19, 17),
+    endDate: new Date(2021, 9, 19, 18),
     title: 'About some shit',
     description: 'Its about some shit and so on and so on',
     speakers: [
@@ -130,7 +128,7 @@ const data: DataType[] = [
 const IndexPage = () => {
   return (
     <Box>
-      <GanttChart data={data} />
+      <TimeLineSection data={data} />
     </Box>
   )
 }

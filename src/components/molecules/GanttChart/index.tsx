@@ -4,6 +4,7 @@ import * as React from 'react'
 import * as d3 from 'd3'
 import GanttStyle from './style'
 import {DataType, RoomAndTimesType, GanttProps} from './types'
+import {scroller} from 'react-scroll'
 
 //#endregion
 
@@ -108,7 +109,6 @@ const GanttChart = ({data}: GanttProps) => {
     .nice()
 
   setUniqueCategoriesAndTimes(data)
-  console.log(categoriesAndTimes)
   const categories = Object.keys(categoriesAndTimes)
   const colorScale = d3.scaleOrdinal().domain(categories).range(d3.schemePaired)
 
@@ -224,6 +224,9 @@ const GanttChart = ({data}: GanttProps) => {
         .on('mouseleave', () => {
           tooltip.transition().duration(50).style('opacity', 0)
         })
+        .on('click', () => {
+          scroller.scrollTo(`${i}`, {smooth: true, offset: -50})
+        })
 
       /* draw event title */
       svgElement
@@ -253,6 +256,9 @@ const GanttChart = ({data}: GanttProps) => {
         })
         .on('mouseleave', () => {
           tooltip.transition().duration(50).style('opacity', 0)
+        })
+        .on('click', () => {
+          scroller.scrollTo(`${i}`, {smooth: true, offset: -50})
         })
     }
 
