@@ -109,7 +109,6 @@ const getRoomTimeTimesCalled = (
 
       categoriesAndTimes[room][categoriesAndTimes[room].indexOf(timeCount)]
         .timesCalled++
-
       return timeCount.timesCalled
     }
   }
@@ -257,7 +256,17 @@ const GanttChart = ({data}: GanttProps) => {
       /* draw event title */
       svgElement
         .append('text')
-        .text(data[i].title)
+        .text(() => {
+          let text = data[i].title
+          const hours =
+            (data[i].endDate.getTime() - data[i].startDate.getTime()) / 3600000
+
+          if (text.length >= 20 * hours) {
+            text = text.substring(0, 20 * hours).concat('...')
+          }
+
+          return text
+        })
         .attr(
           'x',
           axisScale(data[i].startDate) +
