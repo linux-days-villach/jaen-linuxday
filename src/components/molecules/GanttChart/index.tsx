@@ -81,6 +81,32 @@ const getRoomTimeTimesCalled = (
       endDate <= timeCount.endTime &&
       endDate >= timeCount.startTime
     ) {
+      if (!('individualDates' in timeCount)) {
+        categoriesAndTimes[room][
+          categoriesAndTimes[room].indexOf(timeCount)
+        ].individualDates = [{startTime: startDate, endTime: endDate}]
+      } else {
+        let index = -1
+        for (const dateObj of timeCount.individualDates) {
+          if (startDate >= dateObj.endTime && index === -1) {
+            index = timeCount.individualDates.indexOf(dateObj) + 1
+          } else if (
+            startDate <= dateObj.endTime &&
+            startDate >= dateObj.startTime &&
+            endDate <= dateObj.endTime &&
+            endDate >= dateObj.startTime
+          ) {
+            index = -1
+          }
+        }
+        categoriesAndTimes[room][
+          categoriesAndTimes[room].indexOf(timeCount)
+        ].individualDates.push({startTime: startDate, endTime: endDate})
+        if (index > -1) {
+          return index
+        }
+      }
+
       categoriesAndTimes[room][categoriesAndTimes[room].indexOf(timeCount)]
         .timesCalled++
 

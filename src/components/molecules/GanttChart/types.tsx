@@ -16,6 +16,11 @@ export interface DataType {
   type: 'Vortrag' | 'Workshop'
 }
 
+interface StartAndEndTimeType {
+  startTime: Date
+  endTime: Date
+}
+
 export interface RoomAndTimesType {
   [category: string]: [
     {
@@ -23,6 +28,7 @@ export interface RoomAndTimesType {
       endTime: Date
       count: number
       timesCalled: number
+      individualDates?: StartAndEndTimeType[]
     }
   ]
 }
