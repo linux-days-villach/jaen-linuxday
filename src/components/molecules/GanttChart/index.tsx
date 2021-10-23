@@ -110,6 +110,25 @@ const getRoomTimeTimesCalled = (
   }
 }
 
+/* Get the first startDate and last endDate for the chart */
+const getStartAndEndDate = (data: DataType[]) => {
+  let startDate: Date = data[1].startDate
+  let endDate: Date = data[1].endDate
+  for (const room of Object.keys(categoriesAndTimes)) {
+    console.log(room)
+    for (const timeCount of categoriesAndTimes[room]) {
+      console.log(room)
+      if (startDate > timeCount.startTime) {
+        startDate = timeCount.startTime
+      }
+      if (endDate < timeCount.endTime) {
+        endDate = timeCount.endTime
+      }
+    }
+  }
+  return [startDate, endDate]
+}
+
 //#endregion
 
 const GanttChart = ({data}: GanttProps) => {
@@ -122,14 +141,16 @@ const GanttChart = ({data}: GanttProps) => {
   )
   const paddingX = 20
   const currentTime = new Date()
+  setUniqueCategoriesAndTimes(data)
+
+  let [graphStartDate, graphEndDate] = getStartAndEndDate(data)
 
   const axisScale = d3
     .scaleTime()
-    .domain([new Date().setHours(14), new Date().setHours(23)])
+    .domain([graphStartDate, graphEndDate])
     .range([paddingX, width - paddingX])
     .nice()
 
-  setUniqueCategoriesAndTimes(data)
   const categories = Object.keys(categoriesAndTimes)
   const colorScale = d3.scaleOrdinal().domain(categories).range(d3.schemePaired)
 
@@ -193,9 +214,9 @@ const GanttChart = ({data}: GanttProps) => {
         data[i].title +
         '</b>' +
         '<br/>' +
-        data[i].startDate.toLocaleTimeString().substring(0, 4) +
+        data[i].startDate.toLocaleTimeString('de-AT').substring(0, 5) +
         ' - ' +
-        data[i].endDate.toLocaleTimeString().substring(0, 4) +
+        data[i].endDate.toLocaleTimeString('de-AT').substring(0, 5) +
         '<br /><b>Beschreibung:</b><br/>' +
         data[i].description +
         '<br/><b>Sprecher:</b><br/>'

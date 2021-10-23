@@ -44,7 +44,7 @@ const TimeLineSection = ({data}: TimeLineSectionProps) => {
       }
       if (!(d.room in rooms)) {
         rooms.push(d.room)
-    }
+      }
     }
 
     for (const room of rooms) {
@@ -174,7 +174,11 @@ const TimeLineSection = ({data}: TimeLineSectionProps) => {
     <Box>
       <GanttChart data={data} />
       {generateAccordions().map(accordion => {
-        return <Box>{accordion}</Box>
+        return (
+          <Box w="80%" mx="auto">
+            {accordion}
+          </Box>
+        )
       })}
     </Box>
   )
