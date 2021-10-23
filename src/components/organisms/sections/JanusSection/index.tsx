@@ -1,4 +1,4 @@
-import JanusFace, {JanusFaceProps} from '../../molecules/JanusFace'
+import JanusFace, {JanusFaceProps} from '../../../molecules/JanusFace'
 import React from 'react'
 import {Box, Switch, Center, Flex, Text, useColorMode} from '@chakra-ui/react'
 
