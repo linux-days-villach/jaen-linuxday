@@ -65,10 +65,6 @@ const setUniqueCategoriesAndTimes = (data: DataType[]) => {
 }
 
 /* Get the y position of the EventRect */
-/* TODO
- * Rewrite function and RoomsAndTimesType interface to check whether the event can fit next to the last event.
- * This could be achieved by adding an optional startDate and endDate to the type.
- */
 const getRoomTimeTimesCalled = (
   room: string,
   startDate: Date,

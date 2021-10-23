@@ -35,13 +35,24 @@ interface AccordionType {
 const TimeLineSection = ({data}: TimeLineSectionProps) => {
   const sortData = () => {
     const sortedData: SortedDataType = {}
+    const rooms: string[] = []
     for (const d of data) {
       if (!(d.room in sortedData)) {
         sortedData[d.room] = [d]
       } else {
         sortedData[d.room].push(d)
       }
+      if (!(d.room in rooms)) {
+        rooms.push(d.room)
     }
+    }
+
+    for (const room of rooms) {
+      sortedData[room].sort((a, b) => {
+        return a.startDate.getTime() - b.startDate.getTime()
+      })
+    }
+
     return sortedData
   }
 
