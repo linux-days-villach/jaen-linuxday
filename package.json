@@ -39,8 +39,14 @@
     "@chakra-ui/react": "^1.6.7",
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
+    "@fontsource/fira-code": "^4.5.1",
+    "@fontsource/fira-sans": "^4.5.0",
+    "@fontsource/noto-sans": "^4.5.1",
+    "@fontsource/nunito": "^4.5.0",
+    "@fontsource/ubuntu": "^4.5.0",
     "@snek-at/jaen": "^2.0.0",
     "@snek-at/jaen-pages": "^2.0.0",
+    "@snek-at/react-lottie": "^1.0.0-beta.3",
     "@snek-at/storybook-addon-chakra-ui": "^1.0.0-beta.1",
     "electron": "^14.0.0",
     "framer-motion": "^4.1.17",
@@ -57,6 +63,7 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-helmet": "^6.1.0",
+    "react-typed": "^1.2.0",
     "sharp": "^0.29.1"
   },
   "devDependencies": {
